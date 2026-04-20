@@ -1,0 +1,65 @@
+The Fundamentals (Start Here)                                                                            
+                                                                                                           
+  Context is everything. Claude's quality drops as the conversation grows. Use /clear between unrelated    
+  tasks. A fresh focused session beats a long cluttered one every time.                                    
+                                                                                                           
+  Give Claude something to verify against. The single highest-leverage habit:                              
+  - Include test cases with expected outputs                                                               
+  - Paste screenshots of what you want                                                                     
+  - Define "done" explicitly                                                                               
+                                                                                                           
+  Without this, Claude produces plausible-looking code with no way to self-check.
+                                                                                                           
+  ---
+  Prompting (Good → Great)                                                                                 
+                                                                                                           
+  Reference, don't describe:
+  - ❌ "fix the login bug"                                                                                  
+  - ✅ "users report login fails after session timeout. check                                              ─
+  TaskSphere.Applicatign/Servlces/AuthService.cs, wri.eca failing test first, then fix it"
+                                                                                                           
+  Point to existing patterns:
+  ▎ "Follow the same pattern as SprintsApiService. Look at it first, then implement the same structure for 
+  Tasks."                                                                                                  
+                                                                                                           
+  Delegate, don't micromanage:                                                                             
+  ▎ "The access control check is broken for Users on project tasks. The code is in AccessControlService. 
+  Investigate and fix it."                                                                                 
+   
+  ---                                                                                                      
+  Modes & Features Worth Knowing
+                                                                                                           
+  ┌─────────────────────────────┬─────────────────────────────────────────────────────────────────┐
+  │           Feature           │                           When to use                           │        
+  ├─────────────────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ Plan Mode (Shift+Tab twice) │ Before touching unfamiliar code — analyze first, then implement │
+  ├─────────────────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ Esc                         │ Interrupt Claude mid-task and redirect without losing context   │        
+  ├─────────────────────────────┼─────────────────────────────────────────────────────────────────┤        
+  │ /clear                      │ Between unrelated tasks                                         │        
+  ├─────────────────────────────┼─────────────────────────────────────────────────────────────────┤        
+  │ /rewind                     │ Restore conversation/code to a previous checkpoint              │
+  ├─────────────────────────────┼─────────────────────────────────────────────────────────────────┤        
+  │ Ctrl+O                      │ See Claude's reasoning (verbose mode)                           │
+  └─────────────────────────────┴─────────────────────────────────────────────────────────────────┘        
+                  
+  ---
+  CLAUDE.md (Compounding Value)
+                               
+  Your global CLAUDE.md (which you just set up) is already doing heavy lifting. The project CLAUDE.md
+  layers on top. Keep both:                                                                                
+  - Short — too many rules and Claude ignores them all
+  - Non-obvious — skip things Claude can figure out from reading the code                                  
+                  
+  ---                                                                                                      
+  Anti-Patterns to Avoid
+                                                                                                           
+  - Correcting Claude twice on the same issue → /clear and rewrite the prompt
+  - One session for 5 unrelated tasks → context gets noisy, quality drops                                  
+  - Vague success criteria ("make it work") → always define what done looks like                           
+                                                                                                           
+  ---                                                                                                      
+  The deepest skill is developing intuition — knowing when to be specific vs. open-ended, when to plan vs. 
+  just ask. That only comes from using it. The global rules you added today already set you up to avoid the
+   most common mistakes.
+                                        
