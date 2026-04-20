@@ -1,0 +1,49 @@
+1. MCP Servers (biggest unlock)                                                                          
+                                                                                                           
+  Connect Claude to external tools directly. Instead of copy-pasting, Claude can read/write them natively:
+  - GitHub MCP — Claude opens PRs, reads issues, comments, checks CI                                       
+  - Browser MCP — Claude controls a browser (useful for testing UI)                                        
+  - Postgres/SQLite MCP — Claude queries your DB directly                                                  
+  - Filesystem MCP — extended file access beyond the project dir                                           
+                                                                                                           
+  Add with: claude mcp add                                                                                 
+                                                                                                           
+  ---             
+  2. Hooks                                                                                                 
+                  
+  Shell commands that run automatically on Claude events. Examples:
+  - After every file edit → auto-format with Prettier/dotnet format                                        
+  - Before a bash command → log what Claude is about to run                                                
+  - After a tool call → run linter, notify you                                                             
+                                                                                                           
+  Configured in ~/.claude/settings.json under "hooks".                                                     
+                                                                                                           
+  ---                                                                                                      
+  3. Custom Slash Commands                                                                                 
+                          
+  Create your own /commands for repeated workflows. Example:
+  - /review → runs your code review checklist                                                              
+  - /deploy → runs your deployment steps                                                                   
+                                                                                                           
+  Store them as markdown files in .claude/commands/ in your project or ~/.claude/commands/ globally.       
+                                                                                                           
+  ---
+  4. Permissions (reduce interruptions)                                                                    
+                                                                                                           
+  Pre-approve commands you trust so Claude doesn't ask every time:
+  "allowedTools": ["Bash(npm test)", "Bash(dotnet build)", "Bash(git status)"]                             
+                                                                              
+  Set via /permissions or directly in ~/.claude/settings.json.                                             
+                                                                                                           
+  ---                                                                                                      
+  5. Custom Agents                                                                                         
+                  
+  Define specialized sub-agents in .claude/agents/ — for example a dedicated "code reviewer" agent or "test
+   writer" agent that Claude spawns for specific tasks, keeping your main context clean.                   
+   
+  ---                                                                                                      
+  Highest ROI order: MCP servers → Custom slash commands → Hooks → Permissions
+                                                                                                           
+  MCP servers are the biggest leap — especially GitHub MCP if you work with PRs and issues regularly. Want
+  me to set any of these up?                                                                               
+                  
