@@ -1,0 +1,42 @@
+1. Rretho modulet kryeore ne CPU?
+ALU, Memoria, System BUS dhe I/O
+Memoria, System BUS, Regjistrat
+ALU, Regjistrat, CU dhe Intern BUS
+
+2. Cilat jane komponentet e BUS
+BUS i adreses 
+BUS intern
+BUS kontrolli
+BUS i te dhenave 
+
+3. Ne regjistrin PC ruhet?
+Instruksioni i ardhshem 
+Adresa e instruksionit te ardhem
+Adresa e instruksionit ne ekzekutim
+te gjita me larte
+
+4. Cili regjister perdoret per ruajtje te shenimeve te pergjithshme
+Numeruesi i programit (PC)
+Akumlator
+Regjistri i adresave te memories (MAR)
+
+5. Cfare shkakton nje nderprerje ne nje sistem kompjuterik?
+Nje mesazh prej rrjeti
+Nje gabim ne memorie
+Ekzekutimi i nje instruksioni aritmetik
+
+6. Cili eshte qellimi i regjisterimit MAR? 
+Adresa e instruksionit te ardhshem
+Ruan te dhena te perkoshme
+Ruani instruksionin ne ekzekutim
+
+7. Cilat nga opsinet e meposhtme jane funksione te mappimit? 
+Diretk, Random dhe Asociativ
+Set associatve, random dhe skuencial
+Set associatve, Direct, Asociative
+
+8. Shkruani funksionet e nje kompjuteri?
+
+9.Shkruani nje format te adreses se cdo funksioni te mappimit ne cache?
+
+10.Cka paraqet struktura e cka funksioni?
