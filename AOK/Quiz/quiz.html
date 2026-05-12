@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AOK Quiz — Kollofjumi 1 & 2</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --card: #21253a;
+    --border: #2e3354;
+    --accent: #6c63ff;
+    --accent2: #00d4aa;
+    --text: #e2e8f0;
+    --muted: #8892b0;
+    --correct: #00d4aa;
+    --wrong: #ff5370;
+    --partial: #ffd166;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  header p {
+    color: var(--muted);
+    margin-top: 0.4rem;
+    font-size: 0.95rem;
+  }
+
+  .progress-bar {
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto 2rem;
+    height: 6px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 99px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .quiz-container {
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.6rem 1.8rem;
+    transition: border-color 0.2s;
+  }
+
+  .card:hover { border-color: var(--accent); }
+
+  .card.answered-correct { border-color: var(--correct); }
+  .card.answered-wrong   { border-color: var(--wrong); }
+
+  .q-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .q-num {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 99px;
+    min-width: 30px;
+    text-align: center;
+  }
+
+  .q-badge {
+    font-size: 0.7rem;
+    padding: 3px 8px;
+    border-radius: 99px;
+    font-weight: 600;
+  }
+
+  .badge-multi  { background: #2a2060; color: #a89cff; }
+  .badge-single { background: #0d3330; color: #5ef0d2; }
+
+  .q-text {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .hint {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 0.7rem 1rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+  }
+
+  .option:hover { border-color: var(--accent); background: #1e2236; }
+
+  .option input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    border: 2px solid var(--border);
+    border-radius: 5px;
+    background: var(--bg);
+    cursor: pointer;
+    position: relative;
+    transition: all 0.15s;
+  }
+
+  .option input[type="checkbox"]:checked {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .option input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    left: 4px; top: 1px;
+    width: 6px; height: 10px;
+    border: 2px solid #fff;
+    border-top: none;
+    border-left: none;
+    transform: rotate(45deg);
+  }
+
+  .option.single input[type="checkbox"] { border-radius: 50%; }
+
+  .option-label { font-size: 0.93rem; line-height: 1.4; }
+
+  /* after check styles */
+  .option.reveal-correct {
+    border-color: var(--correct);
+    background: #0a2e28;
+  }
+  .option.reveal-correct input[type="checkbox"] {
+    background: var(--correct);
+    border-color: var(--correct);
+  }
+  .option.reveal-correct input[type="checkbox"]::after {
+    content: '';
+    position: absolute;
+    left: 4px; top: 1px;
+    width: 6px; height: 10px;
+    border: 2px solid #fff;
+    border-top: none;
+    border-left: none;
+    transform: rotate(45deg);
+  }
+
+  .option.reveal-wrong {
+    border-color: var(--wrong);
+    background: #2e1020;
+  }
+  .option.reveal-wrong input[type="checkbox"] {
+    background: var(--wrong);
+    border-color: var(--wrong);
+  }
+
+  .option.reveal-missed {
+    border-color: var(--partial);
+    background: #2b2210;
+  }
+
+  .feedback {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    display: none;
+  }
+
+  .feedback.show { display: block; }
+  .feedback.correct-fb { background: #0a2e28; border-left: 3px solid var(--correct); color: #a0f0e0; }
+  .feedback.wrong-fb   { background: #2e1020; border-left: 3px solid var(--wrong);   color: #ffaaaa; }
+  .feedback.partial-fb { background: #2b2210; border-left: 3px solid var(--partial); color: #ffeaaa; }
+
+  .check-btn {
+    margin-top: 1.2rem;
+    padding: 0.55rem 1.4rem;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .check-btn:hover { opacity: 0.85; }
+  .check-btn:disabled { opacity: 0.4; cursor: default; }
+
+  /* Score panel */
+  #score-panel {
+    display: none;
+    max-width: 760px;
+    margin: 2rem auto 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  #score-panel h2 {
+    font-size: 1.6rem;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .score-number {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 0.5rem 0;
+  }
+
+  .score-sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+  .score-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  .score-stat {
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 0.9rem;
+  }
+
+  .score-stat .val {
+    font-size: 1.8rem;
+    font-weight: 700;
+  }
+
+  .score-stat .lbl { font-size: 0.75rem; color: var(--muted); margin-top: 0.2rem; }
+
+  .correct-val { color: var(--correct); }
+  .wrong-val   { color: var(--wrong); }
+  .partial-val { color: var(--partial); }
+
+  .restart-btn {
+    padding: 0.7rem 2rem;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: opacity 0.2s;
+  }
+  .restart-btn:hover { opacity: 0.85; }
+
+  .chapter-divider {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .chapter-divider::before,
+  .chapter-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>AOK Quiz</h1>
+  <p>Kollofjumi 1 (Kap. 3–4) &amp; Kollofjumi 2 (Kap. 4–6) — Ramadan Dervishi</p>
+</header>
+
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<div class="quiz-container" id="quizContainer"></div>
+<div id="score-panel">
+  <h2>Rezultati Final</h2>
+  <div class="score-number" id="scoreNum">—</div>
+  <div class="score-sub" id="scoreSub"></div>
+  <div class="score-grid">
+    <div class="score-stat"><div class="val correct-val" id="statCorrect">0</div><div class="lbl">Sakte</div></div>
+    <div class="score-stat"><div class="val partial-val" id="statPartial">0</div><div class="lbl">Pjeserisht</div></div>
+    <div class="score-stat"><div class="val wrong-val"   id="statWrong">0</div><div class="lbl">Gabim</div></div>
+  </div>
+  <button class="restart-btn" onclick="restartQuiz()">Rifillo Quizin</button>
+</div>
+
+<script>
+const questions = [
+  // ── KOLLOFJUMI 1 ── Kap 3 & 4
+  {
+    chapter: "Kollofjumi 1 — Kap. 3: Top-Level View of Computer Function",
+    id: 1,
+    text: "Cilat jane modulet kryesore te CPU-se?",
+    multi: true,
+    options: [
+      { text: "ALU (Arithmetic Logic Unit)", correct: true },
+      { text: "MAR (Memory Address Register)", correct: false },
+      { text: "CU (Control Unit)", correct: true },
+      { text: "Regjistrat", correct: true },
+      { text: "Intern BUS", correct: true },
+      { text: "ROM", correct: false },
+    ],
+    explanation: "CPU perbehet nga: ALU, CU, Regjistrat dhe Intern BUS. MAR eshte regjister por jo 'modul kryesor' i CPU-se ne kete kontekst. ROM eshte memorie e jashtme.",
+  },
+  {
+    id: 2,
+    text: "Nga cilat perbehen komponentet e BUS-it te sistemit?",
+    multi: true,
+    options: [
+      { text: "Data BUS (BUS i te dhenave)", correct: true },
+      { text: "Power BUS (BUS i energjise)", correct: false },
+      { text: "Address BUS (BUS i adresave)", correct: true },
+      { text: "Control BUS (BUS i kontrollit)", correct: true },
+      { text: "Cache BUS", correct: false },
+    ],
+    explanation: "BUS-i i sistemit ka tri komponentet: Data BUS, Address BUS dhe Control BUS. Power BUS dhe Cache BUS nuk jane komponentet e BUS-it te sistemit.",
+  },
+  {
+    id: 3,
+    text: "Ne regjistrin PC (Program Counter) ruhet:",
+    multi: false,
+    options: [
+      { text: "Adresa e instruksionit te ardhshem", correct: true },
+      { text: "Te dhenat e fundit te lexuara nga memoria", correct: false },
+      { text: "Adresa e bashkesise se cache-it", correct: false },
+      { text: "Rezultati i operacionit te fundit aritmetik", correct: false },
+    ],
+    explanation: "PC (Program Counter) ruan adresen e instruksionit te ardhshem qe do te ekzekutohet. Pas cdo leximi, PC perditësohet automatikisht.",
+  },
+  {
+    id: 4,
+    text: "Cili regjister eshte regjistri kryesor per ruajtjen e rezultateve ndermjetme te ALU-se?",
+    multi: false,
+    options: [
+      { text: "MAR (Memory Address Register)", correct: false },
+      { text: "PC (Program Counter)", correct: false },
+      { text: "Akumulatori (Accumulator)", correct: true },
+      { text: "MDR (Memory Data Register)", correct: false },
+    ],
+    explanation: "Akumulatori eshte regjistri kryesor i te dhenave — ruan rezultatet ndermjetme te operacioneve aritmetike dhe logjike. Processoret moderne kane shume GPR.",
+  },
+  {
+    id: 5,
+    text: "Cilat nga me poshtmet mund te shkaktojne nje nderprerje (interrupt)?",
+    multi: true,
+    options: [
+      { text: "Ndarja me zero ose overflow aritmetik", correct: true },
+      { text: "Sinjali periodik i kllokut (timer)", correct: true },
+      { text: "Perfundimi i nje operacioni I/O", correct: true },
+      { text: "Nje gabim fizik ne memorie", correct: true },
+      { text: "Ekzekutimi normal i nje instruksioni ADD", correct: false },
+    ],
+    explanation: "Nderprerjet shkaktohen nga: gabime programi (divide by zero, overflow), klloku (timer), perfundimi I/O, dhe gabime hardueri. ADD normal nuk gjeneron nderprerje.",
+  },
+  {
+    id: 6,
+    text: "Cili eshte qellimi kryesor i regjistrit MAR (Memory Address Register)?",
+    multi: false,
+    options: [
+      { text: "Ruan te dhenat aktuale qe po transferohen nga/ne memorie", correct: false },
+      { text: "Ruan adresen e vendndodhjes ne memorie per qasje", correct: true },
+      { text: "Numeron instruksionin e ardhshem qe ekzekutohet", correct: false },
+      { text: "Kryen operacione aritmetike mbi adresat", correct: false },
+    ],
+    explanation: "MAR ruan adresen e vendndodhjes ne memorie. CPU vendos adresen ne MAR, pastaj ajo dergohet permes Address BUS tek memoria. MDR (jo MAR) ruan te dhenat.",
+  },
+  {
+    id: 7,
+    text: "Cilat jane funksionet e sakta te mappimit te cache-it?",
+    multi: true,
+    options: [
+      { text: "Mapimi Direkt (Direct Mapping)", correct: true },
+      { text: "Mapimi Asociativ (Associative Mapping)", correct: true },
+      { text: "Mapimi Set Asociativ (Set-Associative Mapping)", correct: true },
+      { text: "Mapimi Random", correct: false },
+      { text: "Mapimi Sequential", correct: false },
+    ],
+    explanation: "Ekzistojne vetem tri funksione mapimi: Direkt, Asociativ dhe Set Asociativ. Random dhe Sequential nuk jane funksione mapimi te cache-it.",
+  },
+  {
+    id: 8,
+    text: "Cilat jane kater funksionet themelore te nje kompjuteri?",
+    multi: true,
+    options: [
+      { text: "Perpunimi i te dhenave (Data Processing)", correct: true },
+      { text: "Ruajtja e te dhenave (Data Storage)", correct: true },
+      { text: "Levizja e te dhenave (Data Movement)", correct: true },
+      { text: "Kontrolli (Control)", correct: true },
+      { text: "Kompilimi i kodit burimor", correct: false },
+      { text: "Programimi i BIOS-it", correct: false },
+    ],
+    explanation: "4 funksionet themelore: Perpunimi, Ruajtja, Levizja e te dhenave dhe Kontrolli. Kompilimi dhe programimi i BIOS nuk jane funksione themelore te arkitektures.",
+  },
+  {
+    id: 9,
+    text: "Formati i adreses ne Mapimin Asociativ (Associative Mapping) perbehet nga:",
+    multi: false,
+    options: [
+      { text: "Tag dhe Word (2 fusha)", correct: true },
+      { text: "Tag, Line dhe Word (3 fusha)", correct: false },
+      { text: "Tag, Set dhe Word (3 fusha)", correct: false },
+      { text: "Vetem Tag (1 fushe)", correct: false },
+    ],
+    explanation: "Mapimi Asociativ ka vetem Tag dhe Word — nuk ka fushe Line sepse blloku mund te futet ne cilendo linje. Tag krahasohet me te gjitha linjat paralelisht.",
+  },
+  {
+    id: 10,
+    text: "Cfare paraqet Funksioni (Function) i nje kompjuteri?",
+    multi: false,
+    options: [
+      { text: "Se si jane te organizuara dhe te nderliderura komponentet", correct: false },
+      { text: "Se cfare ben kompjuteri — operacionet qe kryen", correct: true },
+      { text: "Lidhjet fizike dhe logjike ndermjet komponenteve", correct: false },
+      { text: "Hierarkia e strukturave te nderfutura", correct: false },
+    ],
+    explanation: "Funksioni = SE CFARE ben kompjuteri. Struktura = SE SI jane organizuara komponentet. Funksioni i pergjigjet pyetjes 'cfare?', struktura i pergjigjet 'si?'.",
+  },
+
+  // ── KOLLOFJUMI 2 ── Kap 4, 5, 6
+  {
+    chapter: "Kollofjumi 2 — Kap. 4–6: Cache, Memoria e Brendshme & e Jashtme",
+    id: 11,
+    text: "Cili eshte disavantazhi kryesor i Mapimit Direkt (Direct Mapping)?",
+    multi: false,
+    options: [
+      { text: "Eshte shume i shtrenjte ne implementim", correct: false },
+      { text: "Shkakton fenomenin e quajtur thrashing", correct: true },
+      { text: "Kerkon krahasim paralel te te gjitha etiketave", correct: false },
+      { text: "Nuk mund te perdoret ne processoret moderne", correct: false },
+    ],
+    explanation: "Disavantazhi i mapimit direkt eshte thrashing — kur dy blloqe te shpesh mapojne ne te njejten linje cache dhe zevendesojne njeri-tjetrin vazhdimisht. Eshte i thjeshte dhe i lire — jo i shtrenjte.",
+  },
+  {
+    id: 12,
+    text: "Cilat nga me poshtmet jane karakteristika te RAM (Random Access Memory)?",
+    multi: true,
+    options: [
+      { text: "Lejon lexim dhe shkrim te te dhenave", correct: true },
+      { text: "Eshte volatile (te dhenat humbasin pa rryme)", correct: true },
+      { text: "Perdoret si memoria kryesore e perkohshme", correct: true },
+      { text: "Eshte nonvolatile", correct: false },
+      { text: "Perdoret per ruajtjen e firmware-it", correct: false },
+    ],
+    explanation: "RAM: lejon lexim+shkrim, eshte volatile (te dhenat humbasin), perdoret si memoria kryesore. Firmware ruhet ne ROM/Flash (nonvolatile).",
+  },
+  {
+    id: 13,
+    text: "Cilat nga me poshtmet jane lloje te memories gjysempercuese te brendshme?",
+    multi: true,
+    options: [
+      { text: "DRAM (Dynamic RAM)", correct: true },
+      { text: "SRAM (Static RAM)", correct: true },
+      { text: "EPROM", correct: true },
+      { text: "EEPROM", correct: true },
+      { text: "HDD (Hard Disk Drive)", correct: false },
+      { text: "Flash Memory", correct: true },
+    ],
+    explanation: "Llojet gjysempercuese te brendshme: DRAM, SRAM, EPROM, EEPROM, Flash Memory, ROM, PROM. HDD eshte memoria magnetike e jashtme — nuk eshte gjysempercuese.",
+  },
+  {
+    id: 14,
+    text: "Cili lloj memorie perdoret kryesisht per cache (L1, L2, L3)?",
+    multi: false,
+    options: [
+      { text: "DRAM (Dynamic RAM)", correct: false },
+      { text: "SRAM (Static RAM)", correct: true },
+      { text: "EEPROM", correct: false },
+      { text: "Flash Memory", correct: false },
+    ],
+    explanation: "SRAM perdoret per cache sepse eshte shume me i shpejte se DRAM. DRAM perdoret per memorien kryesore sepse eshte me e lire dhe densitet me te larte.",
+  },
+  {
+    id: 15,
+    text: "Cfare kerkon DRAM qe SRAM nuk kerkon? (zgjidhni te gjitha te saktat)",
+    multi: true,
+    options: [
+      { text: "Freskim periodik (periodic refresh)", correct: true },
+      { text: "Restaurim te te dhenave pas cdo leximi (destructive read)", correct: true },
+      { text: "Qarqe flip-flop per cdo bit", correct: false },
+      { text: "Kompresim te te dhenave para ruajtjes", correct: false },
+    ],
+    explanation: "DRAM: (1) kerkon freskim periodik sepse kondenzatori zbrazet, (2) leximi eshte destruktiv — ngarkesa humbet dhe duhet restauruar. SRAM perdor flip-flop (jo DRAM).",
+  },
+  {
+    id: 16,
+    text: "Si fshihet EPROM?",
+    multi: false,
+    options: [
+      { text: "Elektrikisht byte per byte", correct: false },
+      { text: "Duke e ekspozuar ndaj rrezeve ultraviolet (UV)", correct: true },
+      { text: "Me pajisje speciale one-time gjate prodhimit", correct: false },
+      { text: "Automatikisht pas hiqjes se rrymes", correct: false },
+    ],
+    explanation: "EPROM (Erasable Programmable ROM) fshihet duke e ekspozuar ndaj rrezeve UV ne nivel chip-i. EEPROM (me dy E) fshihet elektrikisht. ROM fshihet vetem ne fabrike.",
+  },
+  {
+    id: 17,
+    text: "Cilat jane karakteristikat e EEPROM?",
+    multi: true,
+    options: [
+      { text: "Fshihet elektrikisht pa e hequr chip-in", correct: true },
+      { text: "Eshte nonvolatile", correct: true },
+      { text: "Shkrimi eshte shume me i ngadalshme se leximi", correct: true },
+      { text: "Fshihet me rreze UV", correct: false },
+      { text: "Programohet vetem nje here (WORM)", correct: false },
+    ],
+    explanation: "EEPROM: fshihet elektrikisht byte per byte, nonvolatile, shkrimi i ngadalte vs leximi. UV eshte per EPROM. WORM (Write Once) eshte per PROM.",
+  },
+  {
+    id: 18,
+    text: "Cili funksion mapimi eshte me i miri per kerkim te shpejte?",
+    multi: false,
+    options: [
+      { text: "Mapimi Direkt", correct: false },
+      { text: "Mapimi Set Asociativ", correct: false },
+      { text: "Mapimi Asociativ i Plote", correct: true },
+      { text: "Te gjitha jane njelloj per kerkim", correct: false },
+    ],
+    explanation: "Mapimi Asociativ i plote eshte me i miri per kerkim — krahason te gjitha etiketat paralelisht, koha eshte konstante. Disavantazhi: hardware i shtrenjtë.",
+  },
+  {
+    id: 19,
+    text: "Pse SRAM eshte me i shpejte se DRAM? (zgjidhni te gjitha arsyet e sakta)",
+    multi: true,
+    options: [
+      { text: "Perdor flip-flop qe mban gjendjen stabile pa operacione shtese", correct: true },
+      { text: "Nuk kerkon freskim periodik (chip gjithmone i disponueshem)", correct: true },
+      { text: "Leximi nuk eshte destruktiv, nuk nevojitet restaurim", correct: true },
+      { text: "Ka me pak tranzistora per cel (rreth 1 vs 6)", correct: false },
+      { text: "Eshte me i lire se DRAM", correct: false },
+    ],
+    explanation: "SRAM eshte me i shpejte per: (1) flip-flop = gjendje stabile, (2) nuk kerkon refresh, (3) leximi nuk eshte destruktiv. SRAM ka ME SHUME tranzistora (6 vs 1) dhe eshte ME I SHTRENJTE.",
+  },
+  {
+    id: 20,
+    text: "Si ndryshon Flash Memory nga EEPROM?",
+    multi: false,
+    options: [
+      { text: "Flash fshihet ne nivel blloku, EEPROM fshihet byte per byte", correct: true },
+      { text: "Flash eshte volatile, EEPROM eshte nonvolatile", correct: false },
+      { text: "Flash kerkon UV per fshirje, EEPROM fshihet elektrikisht", correct: false },
+      { text: "Flash programohet vetem nje here, EEPROM riprogramohet", correct: false },
+    ],
+    explanation: "Flash fshihet elektrikisht ne nivel BLLOKU (jo byte per byte si EEPROM). Kjo e ben me te shpejte per fshirje por me pak granulare. Te dyja jane nonvolatile.",
+  },
+];
+
+let answered = new Array(questions.length).fill(null); // null | 'correct' | 'partial' | 'wrong'
+let checked  = new Array(questions.length).fill(false);
+
+function buildQuiz() {
+  const container = document.getElementById('quizContainer');
+  container.innerHTML = '';
+  answered = new Array(questions.length).fill(null);
+  checked  = new Array(questions.length).fill(false);
+
+  let lastChapter = null;
+  questions.forEach((q, qi) => {
+    if (q.chapter && q.chapter !== lastChapter) {
+      lastChapter = q.chapter;
+      const div = document.createElement('div');
+      div.className = 'chapter-divider';
+      div.textContent = q.chapter;
+      container.appendChild(div);
+    }
+
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.id = `card-${qi}`;
+
+    const correctCount = q.options.filter(o => o.correct).length;
+    const badge = q.multi
+      ? `<span class="q-badge badge-multi">Multi-zgjedhje (${correctCount} te sakta)</span>`
+      : `<span class="q-badge badge-single">Nje zgjedhje</span>`;
+
+    let optionsHtml = q.options.map((opt, oi) => `
+      <label class="option${q.multi ? '' : ' single'}" id="opt-${qi}-${oi}">
+        <input type="checkbox" id="cb-${qi}-${oi}" data-qi="${qi}" data-oi="${oi}" onchange="handleChange(${qi})">
+        <span class="option-label">${opt.text}</span>
+      </label>
+    `).join('');
+
+    card.innerHTML = `
+      <div class="q-meta">
+        <span class="q-num">${qi + 1}</span>
+        <div class="q-text">${q.text}</div>
+        ${badge}
+      </div>
+      <p class="hint">${q.multi ? `Zgjidhni te gjitha pergjigjet e sakta (${correctCount} sosh).` : 'Zgjidhni nje pergjigje.'}</p>
+      <div class="options">${optionsHtml}</div>
+      <div class="feedback" id="fb-${qi}"></div>
+      <button class="check-btn" id="btn-${qi}" onclick="checkAnswer(${qi})" disabled>Kontrollo</button>
+    `;
+    container.appendChild(card);
+
+    // enforce single-choice: uncheck others
+    if (!q.multi) {
+      q.options.forEach((_, oi) => {
+        document.getElementById(`cb-${qi}-${oi}`).addEventListener('change', function() {
+          if (this.checked) {
+            q.options.forEach((__, oi2) => {
+              if (oi2 !== oi) document.getElementById(`cb-${qi}-${oi2}`).checked = false;
+            });
+          }
+        });
+      });
+    }
+  });
+
+  updateProgress();
+  document.getElementById('score-panel').style.display = 'none';
+}
+
+function handleChange(qi) {
+  if (checked[qi]) return;
+  const anyChecked = questions[qi].options.some((_, oi) =>
+    document.getElementById(`cb-${qi}-${oi}`).checked
+  );
+  document.getElementById(`btn-${qi}`).disabled = !anyChecked;
+}
+
+function checkAnswer(qi) {
+  if (checked[qi]) return;
+  checked[qi] = true;
+  const q = questions[qi];
+  const btn = document.getElementById(`btn-${qi}`);
+  const fb  = document.getElementById(`fb-${qi}`);
+  const card = document.getElementById(`card-${qi}`);
+
+  let userCorrect = 0, userWrong = 0, missed = 0;
+
+  q.options.forEach((opt, oi) => {
+    const cb  = document.getElementById(`cb-${qi}-${oi}`);
+    const lbl = document.getElementById(`opt-${qi}-${oi}`);
+    cb.disabled = true;
+
+    if (opt.correct && cb.checked)  { lbl.classList.add('reveal-correct'); userCorrect++; }
+    else if (!opt.correct && cb.checked) { lbl.classList.add('reveal-wrong'); userWrong++; }
+    else if (opt.correct && !cb.checked) { lbl.classList.add('reveal-missed'); missed++; }
+  });
+
+  const totalCorrect = q.options.filter(o => o.correct).length;
+  btn.disabled = true;
+  btn.textContent = 'Kontrolluar';
+
+  if (userCorrect === totalCorrect && userWrong === 0) {
+    answered[qi] = 'correct';
+    card.classList.add('answered-correct');
+    fb.className = 'feedback show correct-fb';
+    fb.innerHTML = `<strong>Sakte!</strong> ${q.explanation}`;
+  } else if (userWrong > 0 && userCorrect === 0) {
+    answered[qi] = 'wrong';
+    card.classList.add('answered-wrong');
+    fb.className = 'feedback show wrong-fb';
+    fb.innerHTML = `<strong>Gabim.</strong> ${q.explanation}`;
+  } else {
+    answered[qi] = 'partial';
+    fb.className = 'feedback show partial-fb';
+    fb.innerHTML = `<strong>Pjeserisht sakte</strong> (${userCorrect}/${totalCorrect} te sakta, ${userWrong} gabime). ${q.explanation}`;
+  }
+
+  updateProgress();
+
+  if (checked.every(c => c)) showScore();
+}
+
+function updateProgress() {
+  const done = checked.filter(Boolean).length;
+  document.getElementById('progressFill').style.width = `${(done / questions.length) * 100}%`;
+}
+
+function showScore() {
+  const correct = answered.filter(a => a === 'correct').length;
+  const partial = answered.filter(a => a === 'partial').length;
+  const wrong   = answered.filter(a => a === 'wrong').length;
+  const score   = Math.round(((correct + partial * 0.5) / questions.length) * 100);
+
+  document.getElementById('scoreNum').textContent = `${score}%`;
+  document.getElementById('scoreSub').textContent =
+    score >= 85 ? 'Shkelqeshem! Je gati per provim.' :
+    score >= 65 ? 'Mire! Rishiko pyetjet ku bere gabim.' :
+                  'Duhet me shume studim. Rifillo dhe provo perseri.';
+  document.getElementById('statCorrect').textContent = correct;
+  document.getElementById('statPartial').textContent = partial;
+  document.getElementById('statWrong').textContent   = wrong;
+
+  const panel = document.getElementById('score-panel');
+  panel.style.display = 'block';
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function restartQuiz() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  setTimeout(buildQuiz, 300);
+}
+
+buildQuiz();
+</script>
+</body>
+</html>
