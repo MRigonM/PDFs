@@ -615,31 +615,120 @@ const questions = [
     ],
     explanation: "Flash fshihet elektrikisht ne nivel BLLOKU (jo byte per byte si EEPROM). Kjo e ben me te shpejte per fshirje por me pak granulare. Te dyja jane nonvolatile.",
   },
+  {
+    id: 21,
+    text: "Formati i adreses ne Mapimin Direkt (Direct Mapping) perbehet nga:",
+    multi: false,
+    options: [
+      { text: "Tag, Line dhe Word (3 fusha)", correct: true },
+      { text: "Tag dhe Word (2 fusha)", correct: false },
+      { text: "Tag, Set dhe Word (3 fusha)", correct: false },
+      { text: "Line dhe Word (2 fusha)", correct: false },
+    ],
+    explanation: "Mapimi Direkt: [Tag | Line | Word]. Fusha Line tregon se ne cilin linje cache mapohet blloku. Tag verifikton nese kemi hit. Word tregon pozicionin brenda bllokut. Asociativi ka [Tag | Word], Set Asociativi ka [Tag | Set | Word].",
+  },
+  {
+    id: 22,
+    text: "Formati i adreses ne Mapimin Set Asociativ (Set-Associative Mapping) perbehet nga:",
+    multi: false,
+    options: [
+      { text: "Tag, Set dhe Word (3 fusha)", correct: true },
+      { text: "Tag dhe Word (2 fusha)", correct: false },
+      { text: "Tag, Line dhe Word (3 fusha)", correct: false },
+      { text: "Set dhe Word (2 fusha)", correct: false },
+    ],
+    explanation: "Mapimi Set Asociativ: [Tag | Set | Word]. Fusha Set identifikon bashkesine ku mapohet blloku. Brenda bashkesise blloku vendoset ne cilendo linje. Direkt ka [Tag | Line | Word], Asociativi ka [Tag | Word].",
+  },
+  {
+    id: 23,
+    text: "Cfare paraqet Struktura (Structure) e nje kompjuteri?",
+    multi: false,
+    options: [
+      { text: "Se cfare ben kompjuteri — operacionet qe kryen", correct: false },
+      { text: "Se si jane te organizuara dhe te nderliderura komponentet fizikisht dhe logjikisht", correct: true },
+      { text: "Shpejtesia e ekzekutimit te instruksioneve", correct: false },
+      { text: "Numri i regjistrave brenda CPU-se", correct: false },
+    ],
+    explanation: "Struktura = SE SI jane organizuara komponentet — lidhjet fizike dhe logjike ndermjet tyre. Funksioni = SE CFARE ben kompjuteri. Cdo komponent ka edhe strukturen e vet te brendshme, duke krijuar nje hierarki strukturash te nderfutura.",
+  },
+  {
+    id: 24,
+    text: "Cilat karakteristika i perkasin ROM-it dhe jo RAM-it?",
+    multi: true,
+    options: [
+      { text: "Eshte nonvolatile — ruan te dhenat edhe pa rryme", correct: true },
+      { text: "Perdoret per ruajtjen e firmware-it dhe BIOS-it", correct: true },
+      { text: "Lejon vetem lexim, jo shkrim te zakonshem", correct: true },
+      { text: "Eshte volatile — humbet te dhenat pa rryme", correct: false },
+      { text: "Perdoret si memoria kryesore e perkohshme e kompjuterit", correct: false },
+    ],
+    explanation: "ROM: nonvolatile, vetem lexim, per firmware/BIOS. RAM: volatile, lexim+shkrim, memoria kryesore e perkohshme. Dallimi themelor: ROM ruan te dhenat pa rryme, RAM jo.",
+  },
+  {
+    id: 25,
+    text: "Cili eshte dallimi kryesor mes PROM dhe EEPROM?",
+    multi: false,
+    options: [
+      { text: "PROM fshihet me rreze UV; EEPROM fshihet elektrikisht", correct: false },
+      { text: "PROM eshte volatile; EEPROM eshte nonvolatile", correct: false },
+      { text: "PROM programohet nje here dhe nuk fshihet (WORM); EEPROM fshihet elektrikisht dhe riprogramohet shume here", correct: true },
+      { text: "PROM perdoret per cache; EEPROM perdoret per memorien kryesore", correct: false },
+    ],
+    explanation: "PROM = Write Once Read Many — programohet nje here me pajisje speciale, nuk fshihet me pas. EEPROM = fshihet elektrikisht byte per byte, riprogramohet shume here. UV eshte per EPROM (jo PROM). Te dyja jane nonvolatile.",
+  },
+  {
+    id: 26,
+    text: "Cilat pohime per Kodin e Hammingut jane te sakta?",
+    multi: true,
+    options: [
+      { text: "Per 8 bite te dhena nevojiten 4 bite pariteti (p1, p2, p4, p8)", correct: true },
+      { text: "Bitat e paritetit vendosen ne pozicionet qe jane fuqi te 2-shit (1, 2, 4, 8...)", correct: true },
+      { text: "Detekton dhe korrigjon gabime single-bit ne memorie", correct: true },
+      { text: "Per 8 bite te dhena, gjithsej perftojme 12 pozicione (8 te dhena + 4 paritet)", correct: true },
+      { text: "Perdor paritet tek (odd parity)", correct: false },
+      { text: "Mund te korrigoje 2 bite gabim njekohesisht", correct: false },
+    ],
+    explanation: "Hamming Code: 8 bite te dhena → 4 bite pariteti (p1,p2,p4,p8) → 12 pozicione gjithsej. Bitat e paritetit jane ne pozicionet fuqi te 2. Perdor paritet CIFT (even). Korrigjon vetem gabime single-bit — jo 2 bite njekohesisht.",
+  },
+  {
+    id: 27,
+    text: "Cili funksion mapimi eshte me i pershtatshmi per shfrytezim praktik ne processoret moderne?",
+    multi: false,
+    options: [
+      { text: "Mapimi Direkt", correct: false },
+      { text: "Mapimi Asociativ i Plote", correct: false },
+      { text: "Mapimi Set Asociativ", correct: true },
+      { text: "Te gjitha jane njelloj per shfrytezim", correct: false },
+    ],
+    explanation: "Set Asociativi eshte kompromisi ideal: redukton thrashing (si asociativi) pa kerkuar krahasim te plote te te gjitha etiketave (i lire si direkti). Perdoret ne te gjithe processoret moderne. Asociativi eshte me i miri per KERKIM, Set Asociativi per SHFRYTEZIM.",
+  },
 ];
 
 let answered = new Array(questions.length).fill(null); // null | 'correct' | 'partial' | 'wrong'
 let checked  = new Array(questions.length).fill(false);
 
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
 function buildQuiz() {
   const container = document.getElementById('quizContainer');
   container.innerHTML = '';
+
+  shuffleArray(questions);
+
   answered = new Array(questions.length).fill(null);
   checked  = new Array(questions.length).fill(false);
 
-  let lastChapter = null;
   questions.forEach((q, qi) => {
-    if (q.chapter && q.chapter !== lastChapter) {
-      lastChapter = q.chapter;
-      const div = document.createElement('div');
-      div.className = 'chapter-divider';
-      div.textContent = q.chapter;
-      container.appendChild(div);
-    }
-
     const card = document.createElement('div');
     card.className = 'card';
     card.id = `card-${qi}`;
 
+    shuffleArray(q.options);
     const correctCount = q.options.filter(o => o.correct).length;
     const badge = q.multi
       ? `<span class="q-badge badge-multi">Multi-zgjedhje (${correctCount} te sakta)</span>`
