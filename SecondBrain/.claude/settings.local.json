@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs wc *)",
+      "Read(//d/GitHub/~/.claude/skills/obsidian-second-brain/**)",
+      "Read(//c/Users/Lenovo Legion/.claude/skills/**)"
+    ]
+  }
+}
